@@ -9,6 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// -------------------
+// Patch for expo-router to work
+// @see https://github.com/expo/expo/pull/37832
+@protocol RNSDismissibleModalProtocol <NSObject>
+
+// If NO is returned, the modal will not be dismissed when new modal is presented.
+// Use it on your own responsibility, as it can lead to unexpected behavior.
+- (BOOL)isDismissible;
+
+@end
+// -------------------
+
 @interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
 
 @end
