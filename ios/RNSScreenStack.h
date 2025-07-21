@@ -5,6 +5,7 @@
 #import <React/RCTViewManager.h>
 #endif
 
+#import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 // -------------------
 
-@interface RNSNavigationController : UINavigationController <RNSViewControllerDelegate>
+@interface RNSNavigationController
+    : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
 
 @end
 
