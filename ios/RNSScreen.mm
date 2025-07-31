@@ -715,8 +715,9 @@ RNS_IGNORE_SUPER_CALL_END
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
-            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+        ->onTransitionProgress(
+            react::RNSScreenEventEmitter::OnTransitionProgress{
+                .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInt:self.tag]
@@ -1193,18 +1194,6 @@ RNS_IGNORE_SUPER_CALL_END
 #endif // Check for iOS >= 16
 
 #endif // !TARGET_OS_TV && !TARGET_OS_VISION
-
-- (void)setFrame:(CGRect)frame
-{
-  NSLog(@"ScreenView [%ld] setFrame: %@", self.tag, NSStringFromCGRect(frame));
-  [super setFrame:frame];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-  NSLog(@"ScreenView [%ld] setBounds: %@", self.tag, NSStringFromCGRect(bounds));
-  [super setBounds:bounds];
-}
 
 #pragma mark - RNSScrollViewBehaviorOverriding
 
