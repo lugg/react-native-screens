@@ -1,27 +1,31 @@
 /// <reference types="react-native/types/modules/Codegen" />
 import type { ViewProps } from 'react-native';
-import type { DirectEventHandler, Int32, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
+import type { DirectEventHandler, Float, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 type GenericEmptyEvent = Readonly<{}>;
-export type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
-export type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
-export type SplitViewPrimaryEdge = 'leading' | 'trailing';
-export type SplitViewDisplayMode = 'automatic' | 'secondaryOnly' | 'oneBesideSecondary' | 'oneOverSecondary' | 'twoBesideSecondary' | 'twoOverSecondary' | 'twoDisplaceSecondary';
+type DisplayModeWillChangeEvent = {
+    currentDisplayMode: string;
+    nextDisplayMode: string;
+};
+type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
+type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
+type SplitViewPrimaryEdge = 'leading' | 'trailing';
+type SplitViewDisplayMode = 'automatic' | 'secondaryOnly' | 'oneBesideSecondary' | 'oneOverSecondary' | 'twoBesideSecondary' | 'twoOverSecondary' | 'twoDisplaceSecondary';
 interface ColumnMetrics {
-    minimumPrimaryColumnWidth?: WithDefault<Int32, -1>;
-    maximumPrimaryColumnWidth?: WithDefault<Int32, -1>;
-    preferredPrimaryColumnWidth?: WithDefault<Int32, -1>;
-    minimumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
-    maximumSupplementaryColumnWidth?: WithDefault<Int32, -1>;
-    preferredSupplementaryColumnWidth?: WithDefault<Int32, -1>;
-    minimumSecondaryColumnWidth?: WithDefault<Int32, -1>;
-    preferredSecondaryColumnWidth?: WithDefault<Int32, -1>;
-    minimumInspectorColumnWidth?: WithDefault<Int32, -1>;
-    maximumInspectorColumnWidth?: WithDefault<Int32, -1>;
-    preferredInspectorColumnWidth?: WithDefault<Int32, -1>;
+    minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
+    maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
+    preferredPrimaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
+    minimumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
+    maximumSupplementaryColumnWidth?: WithDefault<Float, -1.0>;
+    preferredSupplementaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
+    minimumSecondaryColumnWidth?: WithDefault<Float, -1.0>;
+    preferredSecondaryColumnWidthOrFraction?: WithDefault<Float, -1.0>;
+    minimumInspectorColumnWidth?: WithDefault<Float, -1.0>;
+    maximumInspectorColumnWidth?: WithDefault<Float, -1.0>;
+    preferredInspectorColumnWidthOrFraction?: WithDefault<Float, -1.0>;
 }
-export interface NativeProps extends ViewProps {
-    displayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
-    splitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
+interface NativeProps extends ViewProps {
+    preferredDisplayMode?: WithDefault<SplitViewDisplayMode, 'automatic'>;
+    preferredSplitBehavior?: WithDefault<SplitViewSplitBehavior, 'automatic'>;
     primaryEdge?: WithDefault<SplitViewPrimaryEdge, 'leading'>;
     showSecondaryToggleButton?: WithDefault<boolean, false>;
     displayModeButtonVisibility?: WithDefault<SplitViewDisplayModeButtonVisibility, 'automatic'>;
@@ -29,6 +33,7 @@ export interface NativeProps extends ViewProps {
     presentsWithGesture?: WithDefault<boolean, true>;
     showInspector?: WithDefault<boolean, false>;
     onCollapse?: DirectEventHandler<GenericEmptyEvent>;
+    onDisplayModeWillChange?: DirectEventHandler<DisplayModeWillChangeEvent>;
     onExpand?: DirectEventHandler<GenericEmptyEvent>;
     onInspectorHide?: DirectEventHandler<GenericEmptyEvent>;
 }

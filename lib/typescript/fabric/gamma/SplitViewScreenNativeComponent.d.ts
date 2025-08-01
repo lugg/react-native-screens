@@ -2,7 +2,7 @@
 import type { ViewProps } from 'react-native';
 import { DirectEventHandler, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 type GenericEmptyEvent = Readonly<{}>;
-export type SplitViewScreenColumnType = 'column' | 'inspector';
+type SplitViewScreenColumnType = 'column' | 'inspector';
 interface NativeProps extends ViewProps {
     columnType?: WithDefault<SplitViewScreenColumnType, 'column'>;
     onWillAppear?: DirectEventHandler<GenericEmptyEvent>;

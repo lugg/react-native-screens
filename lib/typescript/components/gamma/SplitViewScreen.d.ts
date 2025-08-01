@@ -1,12 +1,5 @@
 import React from 'react';
-import type { ViewProps } from 'react-native';
-type SplitViewScreenProps = {
-    children?: ViewProps['children'];
-    onWillAppear?: () => void;
-    onDidAppear?: () => void;
-    onWillDisappear?: () => void;
-    onDidDisappear?: () => void;
-};
+import { SplitViewScreenProps } from './SplitViewScreen.types';
 /**
  * EXPERIMENTAL API, MIGHT CHANGE W/O ANY NOTICE
  */
