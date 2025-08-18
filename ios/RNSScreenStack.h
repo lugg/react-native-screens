@@ -8,23 +8,28 @@
 #import "RNSBottomTabsSpecialEffectsSupporting.h"
 #import "RNSScreenContainer.h"
 
+#if !TARGET_OS_TV
+#import "RNSOrientationProviding.h"
+#endif // !TARGET_OS_TV
+
+#ifdef RNS_GAMMA_ENABLED
+#import "RNSFrameCorrectionProvider.h"
+#endif // RNS_GAMMA_ENABLED
+
 NS_ASSUME_NONNULL_BEGIN
 
-// -------------------
-// Patch for expo-router to work
-// @see https://github.com/expo/expo/pull/37832
-@protocol RNSDismissibleModalProtocol <NSObject>
-
-// If NO is returned, the modal will not be dismissed when new modal is presented.
-// Use it on your own responsibility, as it can lead to unexpected behavior.
-- (BOOL)isDismissible;
-
-@end
-// -------------------
-
-@interface RNSNavigationController
-    : UINavigationController <RNSViewControllerDelegate, RNSBottomTabsSpecialEffectsSupporting>
-
+@interface RNSNavigationController : UINavigationController <
+                                         RNSViewControllerDelegate,
+                                         RNSBottomTabsSpecialEffectsSupporting
+#if !TARGET_OS_TV
+                                         ,
+                                         RNSOrientationProviding
+#endif // !TARGET_OS_TV
+#ifdef RNS_GAMMA_ENABLED
+                                         ,
+                                         RNSFrameCorrectionProvider
+#endif // RNS_GAMMA_ENABLED
+                                         >
 @end
 
 @interface RNSScreenStackView :
