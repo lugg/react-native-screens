@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import type { NativeSyntheticEvent, ViewProps } from 'react-native';
 type GenericEmptyEvent = Readonly<{}>;
 export type SplitViewScreenColumnType = 'column' | 'inspector';

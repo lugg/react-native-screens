@@ -1,4 +1,3 @@
-/// <reference types="react-native/types/modules/Codegen" />
 import type { ViewProps } from 'react-native';
 import type { DirectEventHandler, Float, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 type GenericEmptyEvent = Readonly<{}>;
@@ -10,6 +9,7 @@ type SplitViewDisplayModeButtonVisibility = 'always' | 'automatic' | 'never';
 type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 type SplitViewPrimaryEdge = 'leading' | 'trailing';
 type SplitViewDisplayMode = 'automatic' | 'secondaryOnly' | 'oneBesideSecondary' | 'oneOverSecondary' | 'twoBesideSecondary' | 'twoOverSecondary' | 'twoDisplaceSecondary';
+type SplitViewOrientation = 'inherit' | 'all' | 'allButUpsideDown' | 'portrait' | 'portraitUp' | 'portraitDown' | 'landscape' | 'landscapeLeft' | 'landscapeRight';
 interface ColumnMetrics {
     minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
     maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
@@ -30,6 +30,7 @@ interface NativeProps extends ViewProps {
     showSecondaryToggleButton?: WithDefault<boolean, false>;
     displayModeButtonVisibility?: WithDefault<SplitViewDisplayModeButtonVisibility, 'automatic'>;
     columnMetrics?: ColumnMetrics;
+    orientation?: WithDefault<SplitViewOrientation, 'inherit'>;
     presentsWithGesture?: WithDefault<boolean, true>;
     showInspector?: WithDefault<boolean, false>;
     onCollapse?: DirectEventHandler<GenericEmptyEvent>;
