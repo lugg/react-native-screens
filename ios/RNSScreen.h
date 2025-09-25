@@ -2,8 +2,10 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
+#import "RNSSafeAreaProviding.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScrollEdgeEffectApplicator.h"
 #import "RNSScrollViewBehaviorOverriding.h"
 
 #if !TARGET_OS_TV
@@ -65,7 +67,10 @@ namespace react = facebook::react;
 #else
     RCTView
 #endif
-    <RNSScreenContentWrapperDelegate, RNSScrollViewBehaviorOverriding>
+    <RNSScreenContentWrapperDelegate,
+     RNSScrollViewBehaviorOverriding,
+     RNSSafeAreaProviding,
+     RNSScrollEdgeEffectProviding>
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
@@ -79,6 +84,10 @@ namespace react = facebook::react;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) RNSScrollEdgeEffect bottomScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
+@property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -153,7 +162,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
-- (void)notifySheetTranslation:(double)y;
+- (void)notifySheetTranslation:(double)y transitioning:(BOOL)transitioning;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;

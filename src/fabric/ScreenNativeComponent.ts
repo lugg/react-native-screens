@@ -26,6 +26,7 @@ type TransitionProgressEvent = Readonly<{
 
 type SheetTranslationEvent = Readonly<{
   y: Double;
+  transitioning: Int32;
 }>;
 
 type HeaderHeightChangeEvent = Readonly<{
@@ -70,6 +71,8 @@ type StackAnimation =
 type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
+
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 
 export interface NativeProps extends ViewProps {
   onAppear?: DirectEventHandler<ScreenEvent>;
@@ -117,6 +120,10 @@ export interface NativeProps extends ViewProps {
   navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
+  bottomScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+  topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
