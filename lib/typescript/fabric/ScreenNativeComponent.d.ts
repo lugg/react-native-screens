@@ -11,6 +11,7 @@ type TransitionProgressEvent = Readonly<{
 }>;
 type SheetTranslationEvent = Readonly<{
     y: Double;
+    transitioning: Int32;
 }>;
 type HeaderHeightChangeEvent = Readonly<{
     headerHeight: Double;
@@ -29,6 +30,7 @@ type StackPresentation = 'push' | 'modal' | 'transparentModal' | 'fullScreenModa
 type StackAnimation = 'default' | 'flip' | 'simple_push' | 'none' | 'fade' | 'slide_from_right' | 'slide_from_left' | 'slide_from_bottom' | 'fade_from_bottom' | 'ios_from_right' | 'ios_from_left';
 type SwipeDirection = 'vertical' | 'horizontal';
 type ReplaceAnimation = 'pop' | 'push';
+type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
 export interface NativeProps extends ViewProps {
     onAppear?: DirectEventHandler<ScreenEvent>;
     onDisappear?: DirectEventHandler<ScreenEvent>;
@@ -75,6 +77,10 @@ export interface NativeProps extends ViewProps {
     navigationBarTranslucent?: boolean;
     navigationBarHidden?: boolean;
     nativeBackButtonDismissalEnabled?: boolean;
+    bottomScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+    leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+    rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+    topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

@@ -1,1 +1,1 @@
-{"version":3,"names":["internalEnableDetailedBottomTabsLogging","bottomTabsDebugLog"],"sourceRoot":"../../../src","sources":["private/index.ts"],"mappings":"AAAA,SACEA,uCAAuC,EACvCC,kBAAkB,QACb,WAAW","ignoreList":[]}
+{"version":3,"names":["internalEnableDetailedBottomTabsLogging","bottomTabsDebugLog","default","SafeAreaView"],"sourceRoot":"../../../src","sources":["private/index.ts"],"mappings":"AAAA,SACEA,uCAAuC,EACvCC,kBAAkB,QACb,WAAW;AAElB,SAASC,OAAO,IAAIC,YAAY,QAAQ,sCAAsC","ignoreList":[]}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Animated, NativeSyntheticEvent, ViewProps, View, TargetedEvent, TextInputFocusEventData, ColorValue } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
+import { ScrollEdgeEffect } from './components/shared/types';
 export type SearchBarCommands = {
     focus: () => void;
     blur: () => void;
@@ -27,6 +28,7 @@ export type TransitionProgressEventType = {
 };
 export type SheetTranslationEventType = {
     y: number;
+    transitioning: number;
 };
 export type GestureResponseDistanceType = {
     start?: number;
@@ -71,6 +73,8 @@ export interface ScreenProps extends ViewProps {
      * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
      * Defaults to `false`.
      *
+     * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored.
+     *
      * @platform ios
      */
     fullScreenSwipeEnabled?: boolean;
@@ -80,6 +84,9 @@ export interface ScreenProps extends ViewProps {
      * default iOS shadow. Defaults to `true`.
      *
      * This does not affect the behavior of transitions that don't use gestures, enabled by `fullScreenGestureEnabled` prop.
+     *
+     * @deprecated since iOS 26, full screen swipe is handled by native recognizer, and this prop is ignored. We still fallback
+     * to the legacy implementation when when handling custom animations, but we assume `true` for shadows.
      *
      * @platform ios
      */
@@ -92,6 +99,8 @@ export interface ScreenProps extends ViewProps {
     gestureEnabled?: boolean;
     /**
      * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+     *
+     * @deprecated since iOS 26, this prop conflicts with the native behavior of full screen swipe to dismiss, therefore it is ignored.
      *
      * @platform ios
      */
@@ -116,6 +125,24 @@ export interface ScreenProps extends ViewProps {
      * @platform android
      */
     nativeBackButtonDismissalEnabled?: boolean;
+    /**
+     * Configures the scroll edge effect for the _content ScrollView_ (the ScrollView that is present in first descendants chain of the Screen).
+     * Depending on values set, it will blur the scrolling content below certain UI elements (Header Items, SearchBar)
+     * for the specifed edge of the ScrollView.
+     *
+     * When set in nested containers, i.e. ScreenStack inside BottomTabs, or the other way around,
+     * the ScrollView will use only the innermost one's config.
+     *
+     * @platform ios
+     *
+     * @supported iOS 26 or higher
+     */
+    scrollEdgeEffects?: {
+        bottom: ScrollEdgeEffect;
+        left: ScrollEdgeEffect;
+        right: ScrollEdgeEffect;
+        top: ScrollEdgeEffect;
+    };
     /**
      * Sets the navigation bar color. Defaults to initial status bar color.
      *
@@ -428,7 +455,7 @@ export interface ScreenProps extends ViewProps {
     swipeDirection?: SwipeDirectionTypes;
     /**
      * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `500`.
-     * The duration of `default` and `flip` transitions isn't customizable.
+     * For screens with `default` and `flip` transitions, and, as of now, for screens with `presentation` set to `modal`, `formSheet`, `pageSheet` (regardless of transition), the duration isn't customizable.
      *
      * @platform ios
      */
@@ -680,7 +707,13 @@ export interface SearchBarProps {
      */
     disableBackButtonOverride?: boolean;
     /**
-     * Indicates whether to hide the navigation bar
+     * Indicates whether to hide the navigation bar.
+     *
+     * If value is `undefined`, uses native behavior:
+     * - on iOS versions prior to 26, value is `true`,
+     * - starting from iOS 26, value is determined by context.
+     *
+     * Restoring native behavior after setting the value to `true` or `false` is unsupported.
      *
      * @platform ios
      */
@@ -698,7 +731,15 @@ export interface SearchBarProps {
      */
     inputType?: 'text' | 'phone' | 'number' | 'email';
     /**
-     * Indicates whether to obscure the underlying content
+     * Indicates whether to obscure the underlying content.
+     *
+     * If value is `undefined`, uses native behavior:
+     * - on iOS, value is `false`,
+     * - on tvOS, value is `true`.
+     *
+     * Restoring native behavior after setting the value to `true` or `false` is unsupported.
+     *
+     * @platform ios
      */
     obscureBackground?: boolean;
     /**
@@ -764,7 +805,7 @@ export interface SearchBarProps {
      * For iOS versions prior to 26, `integrated`, `integratedButton`, `integratedCentered` are
      * the same as `inline`.
      *
-     * Defaults to `stacked`.
+     * Defaults to `automatic`.
      *
      * Complete list of possible search bar placements is available in the official UIKit documentation:
      * @see {@link https://developer.apple.com/documentation/uikit/uinavigationitem/searchbarplacement-swift.enum|UINavigationItem.SearchBarPlacement}
@@ -855,6 +896,5 @@ export interface GestureProviderProps extends GestureProps {
 }
 export * from './components/bottom-tabs/BottomTabs.types';
 export * from './components/bottom-tabs/BottomTabsScreen.types';
-export * from './components/gamma/SplitViewHost.types';
-export * from './components/gamma/SplitViewScreen.types';
+export * from './components/shared/types';
 //# sourceMappingURL=types.d.ts.map
