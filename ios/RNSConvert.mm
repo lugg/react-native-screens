@@ -36,6 +36,20 @@
   }
 }
 
++ (RNSOptionalBoolean)RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:
+    (react::RNSScreenFullScreenSwipeEnabled)fullScreenSwipeEnabled
+{
+  switch (fullScreenSwipeEnabled) {
+    using enum react::RNSScreenFullScreenSwipeEnabled;
+    case Undefined:
+      return RNSOptionalBooleanUndefined;
+    case True:
+      return RNSOptionalBooleanTrue;
+    case False:
+      return RNSOptionalBooleanFalse;
+  }
+}
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation
 {
@@ -203,6 +217,7 @@
     using enum react::RNSSearchBarAutoCapitalize;
     case Words:
       return UITextAutocapitalizationTypeWords;
+    case SystemDefault:
     case Sentences:
       return UITextAutocapitalizationTypeSentences;
     case Characters:

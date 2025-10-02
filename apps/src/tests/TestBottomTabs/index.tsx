@@ -107,11 +107,18 @@ const TAB_CONFIGS: TabConfiguration[] = [
       orientation: 'landscape',
     },
     component: Tab2,
+    safeAreaConfiguration: {
+      edges: {
+        top: true,
+        bottom: true,
+      },
+    },
   },
   {
     tabScreenProps: {
       tabKey: 'Tab3',
       badgeValue: '2137',
+      scrollEdgeEffects: { bottom: 'hard' },
       tabBarItemBadgeBackgroundColor: Colors.RedDark40,
       tabBarItemBadgeTextColor: Colors.RedDark120,
       standardAppearance: {
@@ -173,7 +180,25 @@ function App() {
         config,
         setConfig,
       }}>
-      <BottomTabsContainer tabConfigs={TAB_CONFIGS} />
+      <BottomTabsContainer
+        tabConfigs={TAB_CONFIGS}
+        tabBarBackgroundColor={Colors.NavyLight100}
+        tabBarItemActiveIndicatorColor={Colors.GreenLight40}
+        tabBarItemActiveIndicatorEnabled={true}
+        tabBarTintColor={Colors.YellowLight100}
+        tabBarItemIconColor={Colors.BlueLight100}
+        tabBarItemTitleFontColor={Colors.BlueLight40}
+        tabBarItemIconColorActive={Colors.GreenLight100}
+        tabBarItemTitleFontColorActive={Colors.GreenLight40}
+        tabBarItemTitleFontSize={10}
+        tabBarItemTitleFontSizeActive={15}
+        tabBarItemRippleColor={Colors.WhiteTransparentDark}
+        tabBarItemTitleFontFamily="monospace"
+        tabBarItemTitleFontStyle="italic"
+        tabBarItemTitleFontWeight="700"
+        tabBarItemLabelVisibilityMode="auto"
+        tabBarMinimizeBehavior="onScrollDown"
+      />
     </ConfigWrapperContext.Provider>
   );
 }

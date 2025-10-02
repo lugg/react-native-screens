@@ -15,6 +15,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
 
+const FOOTER_HEIGHT = 64;
+
 const SPRING_CONFIG: WithSpringConfig = {
   damping: 500,
   stiffness: 1000,
@@ -57,7 +59,7 @@ function Home({ navigation }: RouteProps<'Home'>) {
 
 function FormSheetFooter() {
   return (
-    <View style={{ height: 64, backgroundColor: 'lavender' }}>
+    <View style={{ height: FOOTER_HEIGHT, backgroundColor: 'lavender' }}>
       <Button title="Just click me" onPress={() => console.log('Footer button clicked')} />
     </View>
   );
@@ -102,15 +104,16 @@ function FormSheet({ navigation }: RouteProps<'FormSheet'>) {
   }, [])
 
   return (
-    <ScrollView>
-      <View style={styles.inputWrapper}>
-        <TextInput style={styles.input} placeholder="Trigger keyboard..."/>
-      </View>
-      <View style={{ marginTop: 20 }}>
+    <ScrollView contentContainerStyle={styles.content}>
+      <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Trigger keyboard..."/>
+      <View>
         <Button title="Expand" onPress={() => setCurrentDetentIndex(1)} />
         <Button title="Collapse" onPress={() => setCurrentDetentIndex(0)} />
         <Button title="Dismiss" onPress={() => navigation.goBack()} />
       </View>
+      {Array.from({ length: 40 }, (_, i) => (
+        <View key={i} style={styles.item} />
+      ))}
     </ScrollView>
   );
 }
@@ -126,7 +129,7 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="FormSheet" component={FormSheet} options={{
               presentation: 'formSheet',
-              sheetAllowedDetents: [0.3, 0.6, 1],
+              sheetAllowedDetents: [0.3, 0.6, 0.9],
               // sheetAllowedDetents: [0.9997],
               // sheetAllowedDetents: 'fitToContents',
               sheetLargestUndimmedDetentIndex: 'none',
@@ -152,8 +155,16 @@ const styles = StyleSheet.create({
     borderRadius: 56 / 2,
     backgroundColor: 'white',
   },
-  inputWrapper: {
-    padding: 12,
+  content: {
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    gap: 8,
+    paddingBottom: FOOTER_HEIGHT + 12,
+  },
+  item: {
+    backgroundColor: 'lavender',
+    height: 40,
+    borderRadius: 16,
   },
   input: {
     paddingVertical: 8,

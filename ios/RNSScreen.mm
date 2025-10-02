@@ -39,6 +39,7 @@
 #import "RNSTabBarController.h"
 
 #import "RNSDefines.h"
+#import "UIView+Pinning.h"
 #import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -132,6 +133,7 @@ struct ContentWrapperBox {
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _activityState = RNSActivityStateUndefined;
+  _fullScreenSwipeEnabled = RNSOptionalBooleanUndefined;
   _fullScreenSwipeShadowEnabled = YES;
   _shouldUpdateScrollEdgeEffects = NO;
 #if !TARGET_OS_TV
@@ -197,73 +199,20 @@ RNS_IGNORE_SUPER_CALL_END
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
-
-  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
-    // In case of formSheet stack presentation, to mitigate view flickering
-    // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
-    // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
-    // strict frame every time the sheet size is updated by the code above. This approach leads however to
-    // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
-    // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
-    // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
-    // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when
-    // items are added/removed to/from the scroll view, but it's the best we got rn. See
-    // https://github.com/software-mansion/react-native-screens/pull/1852
-
-    // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
-    // It might be necessary in case someone doesn't want its scroll view to span over whole
-    // height of the sheet.
-    [self applyFrameCorrectionForDescendantScrollView];
-  }
 }
 
 - (void)applyFrameCorrectionForDescendantScrollView
 {
+  // TODO: Something is wrong with `tryFindDescendantScrollView`.
+  // It cannot find scrollView when header is present.
   RNS_REACT_SCROLL_VIEW_COMPONENT *scrollView = [self tryFindDescendantScrollView];
   if (_sheetsScrollView != scrollView) {
-    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
-
-    // We pass 0 as options, as we are not interested in receiving updated bounds value,
-    // we are going to overwrite it anyway.
-    [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
-  }
-  if (scrollView != nil) {
-    [self correctScrollViewFrame:scrollView withHeader:nil];
-  }
-}
-
-- (void)correctScrollViewFrame:(nonnull RNS_REACT_SCROLL_VIEW_COMPONENT *)scrollViewComponent
-                    withHeader:(nullable UIView *)headerView
-{
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
-  if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
-    return;
-  }
-
-  // Fallback: legacy behavior
-  [scrollViewComponent setFrame:self.frame];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
-                       context:(void *)context
-{
-  UIView *scrollView = (UIView *)object;
-
-  if (![scrollView isKindOfClass:RNS_REACT_SCROLL_VIEW_COMPONENT.class]) {
-    return;
-  }
-
-  RNSScreenContentWrapper *_Nullable contentWrapper = _contentWrapperBox.contentWrapper;
-  if (contentWrapper != nil && [contentWrapper coerceChildScrollViewComponentSizeToSize:self.frame.size]) {
-    return;
-  }
-
-  // Fallback: legacy behavior
-  if (!CGRectEqualToRect(scrollView.frame, self.frame)) {
-    [scrollView setFrame:self.frame];
+    [scrollView unpin];
+    [scrollView pinToView:self
+                fromEdges:UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeTop | UIRectEdgeBottom
+               withHeight:nil
+              constraints:nil];
   }
 }
 
@@ -471,6 +420,21 @@ RNS_IGNORE_SUPER_CALL_END
 {
   _shouldUpdateScrollEdgeEffects = YES;
   _topScrollEdgeEffect = topScrollEdgeEffect;
+}
+
+- (BOOL)isFullScreenSwipeEffectivelyEnabled
+{
+  switch (_fullScreenSwipeEnabled) {
+    case RNSOptionalBooleanTrue:
+      return YES;
+    case RNSOptionalBooleanFalse:
+      return NO;
+    case RNSOptionalBooleanUndefined:
+      if (@available(iOS 26, *)) {
+        return YES;
+      }
+      return NO;
+  }
 }
 
 RNS_IGNORE_SUPER_CALL_BEGIN
@@ -947,7 +911,7 @@ RNS_IGNORE_SUPER_CALL_END
 - (void)invalidate
 {
   _controller = nil;
-  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+  [_sheetsScrollView unpin];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
@@ -1365,7 +1329,8 @@ RNS_IGNORE_SUPER_CALL_END
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
-  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+  _fullScreenSwipeEnabled =
+      [RNSConvert RNSOptionalBooleanFromRNSFullScreenSwipeEnabledCppEquivalent:newScreenProps.fullScreenSwipeEnabled];
 
   [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
@@ -1654,12 +1619,29 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupProgressNotification];
     [self setupGestureRecognizer];
   }
+
+  if (self.screenView.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    // In case of formSheet stack presentation, to mitigate view flickering
+    // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
+    // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
+    // strict frame every time the sheet size is updated by the code above. This approach leads however to
+    // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
+    // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
+    // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
+    // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when
+    // items are added/removed to/from the scroll view, but it's the best we got rn. See
+    // https://github.com/software-mansion/react-native-screens/pull/1852
+
+    // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
+    // It might be necessary in case someone doesn't want its scroll view to span over whole
+    // height of the sheet.
+    [self.screenView applyFrameCorrectionForDescendantScrollView];
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-
   // self.navigationController might be null when we are dismissing a modal
   if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
@@ -1765,6 +1747,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isTabScreen || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
+    // Update only when screenView is not formSheet.
+    // Fix performance issue while dragging sheet.
     if (self.screenView.stackPresentation != RNSScreenStackPresentationFormSheet) {
       [self.screenView updateBounds];
     }
@@ -2020,7 +2004,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.view isKindOfClass:[RNSScreenView class]]) {
     // if the view is already snapshot, there is not sense in sending progress since on JS side
     // the component is already not present
-    [self.screenView notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   }
 }
 
@@ -2313,7 +2297,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, RNSOptionalBoolean);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
