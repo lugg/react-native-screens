@@ -8,7 +8,7 @@ export type ChangeTextEvent = Readonly<{
     text?: string;
 }>;
 type SearchBarPlacement = 'automatic' | 'inline' | 'stacked' | 'integrated' | 'integratedButton' | 'integratedCentered';
-type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
+type AutoCapitalizeType = 'systemDefault' | 'none' | 'words' | 'sentences' | 'characters';
 type OptionalBoolean = 'undefined' | 'false' | 'true';
 export interface NativeProps extends ViewProps {
     onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
@@ -17,7 +17,7 @@ export interface NativeProps extends ViewProps {
     onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
     onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
     hideWhenScrolling?: WithDefault<boolean, true>;
-    autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
+    autoCapitalize?: WithDefault<AutoCapitalizeType, 'systemDefault'>;
     placeholder?: string;
     placement?: WithDefault<SearchBarPlacement, 'automatic'>;
     allowToolbarIntegration?: WithDefault<boolean, true>;
@@ -27,6 +27,7 @@ export interface NativeProps extends ViewProps {
     barTintColor?: ColorValue;
     tintColor?: ColorValue;
     textColor?: ColorValue;
+    autoFocus?: WithDefault<boolean, false>;
     disableBackButtonOverride?: boolean;
     inputType?: string;
     onClose?: DirectEventHandler<SearchBarEvent> | null;
