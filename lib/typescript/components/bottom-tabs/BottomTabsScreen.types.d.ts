@@ -1,21 +1,12 @@
-import type { ColorValue, ImageSourcePropType, NativeSyntheticEvent, TextStyle, ViewProps } from 'react-native';
+import type { ColorValue, NativeSyntheticEvent, TextStyle, ViewProps } from 'react-native';
 import { ScrollEdgeEffect } from '../shared/types';
+import type { PlatformIcon, PlatformIconIOS } from '../../types';
 export type EmptyObject = Record<string, never>;
 export type BottomTabsScreenEventHandler<T> = (event: NativeSyntheticEvent<T>) => void;
 export type LifecycleStateChangeEvent = Readonly<{
     previousState: number;
     newState: number;
 }>;
-export interface SFIcon {
-    sfSymbolName: string;
-}
-export interface ImageIcon {
-    imageSource: ImageSourcePropType;
-}
-export interface TemplateIcon {
-    templateSource: ImageSourcePropType;
-}
-export type Icon = SFIcon | ImageIcon | TemplateIcon;
 export type BottomTabsScreenBlurEffect = 'none' | 'systemDefault' | 'extraLight' | 'light' | 'dark' | 'regular' | 'prominent' | 'systemUltraThinMaterial' | 'systemThinMaterial' | 'systemMaterial' | 'systemThickMaterial' | 'systemChromeMaterial' | 'systemUltraThinMaterialLight' | 'systemThinMaterialLight' | 'systemMaterialLight' | 'systemThickMaterialLight' | 'systemChromeMaterialLight' | 'systemUltraThinMaterialDark' | 'systemThinMaterialDark' | 'systemMaterialDark' | 'systemThickMaterialDark' | 'systemChromeMaterialDark';
 export type BottomTabsSystemItem = 'bookmarks' | 'contacts' | 'downloads' | 'favorites' | 'featured' | 'history' | 'more' | 'mostRecent' | 'mostViewed' | 'recents' | 'search' | 'topRated';
 export type BottomTabsScreenOrientation = 'inherit' | 'all' | 'allButUpsideDown' | 'portrait' | 'portraitUp' | 'portraitDown' | 'landscape' | 'landscapeLeft' | 'landscapeRight';
@@ -243,6 +234,41 @@ export interface BottomTabsScreenProps {
      */
     badgeValue?: string;
     /**
+     * @summary Specifies the icon for the tab bar item.
+     *
+     * You can define an icon separately for each platform (in `ios` and `android`)
+     * or define a default icon in `shared`. The shared icon will be used on both
+     * platforms unless it is overridden by a platform-specific definition
+     * in `ios` or `android`.
+     *
+     * Supported values:
+     *
+     * Shared (both iOS and Android):
+     * - `{ type: 'imageSource', imageSource }`
+     *   Uses an image from the provided resource.
+     *
+     *   Remarks: `imageSource` type doesn't support SVGs on Android.
+     *   For loading SVGs use `drawableResource` type.
+     *
+     * iOS-only:
+     * - `{ type: 'sfSymbol', name }`
+     *   Uses an SF Symbol with the specified name.
+     * - `{ type: 'templateSource', templateSource }`
+     *   Uses the provided image as a template image.
+     *   The icon color will depend on the current state
+     *   of the tab bar item and icon color-related props.
+     *
+     * Android-only:
+     * - `{ type: 'drawableResource', name }`
+     *   Uses a drawable resource with the given name.
+     *
+     *   Remarks: Requires passing a drawable to resources via Android Studio.
+     *
+     * On iOS, if no `selectedIcon` is provided, this icon will also
+     * be used as the selected state icon.
+     */
+    icon?: PlatformIcon;
+    /**
      * @summary Specifies supported orientations for the tab screen.
      *
      * Procedure for determining supported orientations:
@@ -292,25 +318,6 @@ export interface BottomTabsScreenProps {
      */
     orientation?: BottomTabsScreenOrientation;
     /**
-     * @summary Specifies the icon for the tab bar item.
-     *
-     * Accepts a string corresponding to the resource name. Initially searches within
-     * the app's drawable resources. If no matching resource is found, it defaults to
-     * searching within the Android's drawable resources.
-     *
-     * @platform android
-     */
-    iconResourceName?: string;
-    /**
-     * @summary Specifies the icon for the tab bar item.
-     *
-     * Accepts a path to the external image asset. As for now, it respects an image from local assets
-     * and passed by `source.uri` property.
-     *
-     * @platform android
-     */
-    iconResource?: ImageSourcePropType;
-    /**
      * @summary Specifies the color of the text in the badge.
      *
      * @platform android
@@ -345,33 +352,15 @@ export interface BottomTabsScreenProps {
      */
     scrollEdgeAppearance?: BottomTabsScreenAppearance;
     /**
-     * @summary Specifies the icon for the tab bar item.
-     *
-     * The following values are currently supported:
-     *
-     * - an object with `sfSymbolName` - will attempt to use SF
-     *   Symbol with given name,
-     * - an object with `imageSource` - will attempt to use image
-     *   from provided resource,
-     * - an object with `templateSource` - will attempt to use image
-     *   from provided resource as template (the color of the image will
-     *   depend on props related to icon color and tab bar item's state).
-     *
-     * If no `selectedIcon` is provided, it will also be used as `selectedIcon`.
-     *
-     * @platform ios
-     */
-    icon?: Icon;
-    /**
      * @summary Specifies the icon for tab bar item when it is selected.
      *
-     * Supports the same values as `icon` property.
+     * Supports the same values as `icon` property for iOS.
      *
      * To use `selectedIcon`, `icon` must also be provided.
      *
      * @platform ios
      */
-    selectedIcon?: Icon;
+    selectedIcon?: PlatformIconIOS;
     /**
      * @summary System-provided tab bar item with predefined icon and title
      *

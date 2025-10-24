@@ -49,8 +49,8 @@ export interface NativeProps extends ViewProps {
     title?: string | undefined | null;
     badgeValue?: string;
     orientation?: WithDefault<Orientation, 'inherit'>;
-    iconResourceName?: string;
-    iconResource?: ImageSource;
+    drawableIconResourceName?: string;
+    imageIconResource?: ImageSource;
     tabBarItemBadgeTextColor?: ColorValue;
     tabBarItemBadgeBackgroundColor?: ColorValue;
     standardAppearance?: UnsafeMixed<Appearance>;

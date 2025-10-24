@@ -10,6 +10,7 @@ type SplitViewSplitBehavior = 'automatic' | 'displace' | 'overlay' | 'tile';
 type SplitViewPrimaryEdge = 'leading' | 'trailing';
 type SplitViewDisplayMode = 'automatic' | 'secondaryOnly' | 'oneBesideSecondary' | 'oneOverSecondary' | 'twoBesideSecondary' | 'twoOverSecondary' | 'twoDisplaceSecondary';
 type SplitViewOrientation = 'inherit' | 'all' | 'allButUpsideDown' | 'portrait' | 'portraitUp' | 'portraitDown' | 'landscape' | 'landscapeLeft' | 'landscapeRight';
+type SplitViewPrimaryBackgroundStyle = 'default' | 'none' | 'sidebar';
 interface ColumnMetrics {
     minimumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
     maximumPrimaryColumnWidth?: WithDefault<Float, -1.0>;
@@ -31,6 +32,7 @@ interface NativeProps extends ViewProps {
     displayModeButtonVisibility?: WithDefault<SplitViewDisplayModeButtonVisibility, 'automatic'>;
     columnMetrics?: ColumnMetrics;
     orientation?: WithDefault<SplitViewOrientation, 'inherit'>;
+    primaryBackgroundStyle?: WithDefault<SplitViewPrimaryBackgroundStyle, 'default'>;
     presentsWithGesture?: WithDefault<boolean, true>;
     showInspector?: WithDefault<boolean, false>;
     onCollapse?: DirectEventHandler<GenericEmptyEvent>;

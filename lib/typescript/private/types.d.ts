@@ -1,2 +1,2 @@
-export * from '../components/safe-area/SafeAreaView.types';
+export declare const __MODULE_KEEP__: number;
 //# sourceMappingURL=types.d.ts.map
