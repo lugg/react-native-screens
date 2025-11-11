@@ -25,6 +25,7 @@ export interface NativeProps extends ViewProps {
     tabBarTintColor?: ColorValue;
     tabBarMinimizeBehavior?: WithDefault<TabBarMinimizeBehavior, 'automatic'>;
     tabBarControllerMode?: WithDefault<TabBarControllerMode, 'automatic'>;
+    tabBarHidden?: WithDefault<boolean, false>;
     controlNavigationStateInJS?: WithDefault<boolean, false>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;

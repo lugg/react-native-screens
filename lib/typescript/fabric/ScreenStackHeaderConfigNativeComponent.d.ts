@@ -11,6 +11,7 @@ type OnPressHeaderBarButtonMenuItemEvent = Readonly<{
 }>;
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 type BlurEffect = 'none' | 'extraLight' | 'light' | 'dark' | 'regular' | 'prominent' | 'systemUltraThinMaterial' | 'systemThinMaterial' | 'systemMaterial' | 'systemThickMaterial' | 'systemChromeMaterial' | 'systemUltraThinMaterialLight' | 'systemThinMaterialLight' | 'systemMaterialLight' | 'systemThickMaterialLight' | 'systemChromeMaterialLight' | 'systemUltraThinMaterialDark' | 'systemThinMaterialDark' | 'systemMaterialDark' | 'systemThickMaterialDark' | 'systemChromeMaterialDark';
+type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 export interface NativeProps extends ViewProps {
     onAttached?: DirectEventHandler<OnAttachedEvent>;
     onDetached?: DirectEventHandler<OnDetachedEvent>;
@@ -46,6 +47,8 @@ export interface NativeProps extends ViewProps {
     headerRightBarButtonItems?: UnsafeMixed[];
     onPressHeaderBarButtonItem?: DirectEventHandler<OnPressHeaderBarButtonItemEvent>;
     onPressHeaderBarButtonMenuItem?: DirectEventHandler<OnPressHeaderBarButtonMenuItemEvent>;
+    synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
+    userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

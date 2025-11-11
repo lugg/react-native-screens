@@ -4,6 +4,7 @@ export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'title' | 'center' 
 export interface NativeProps extends ViewProps {
     type?: WithDefault<HeaderSubviewTypes, 'left'>;
     hidesSharedBackground?: boolean;
+    synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

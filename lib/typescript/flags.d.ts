@@ -35,6 +35,9 @@ export declare const featureFlags: {
      */
     experiment: {
         controlledBottomTabs: boolean;
+        synchronousScreenUpdatesEnabled: boolean;
+        synchronousHeaderConfigUpdatesEnabled: boolean;
+        synchronousHeaderSubviewUpdatesEnabled: boolean;
     };
     /**
      * Section for stable flags, which can be used to configure library behaviour.

@@ -13,6 +13,12 @@ export interface BottomTabsProps extends ViewProps {
      */
     onNativeFocusChange?: (event: NativeSyntheticEvent<NativeFocusChangeEvent>) => void;
     /**
+     * @summary Hides the tab bar.
+     *
+     * @default false
+     */
+    tabBarHidden?: boolean;
+    /**
      * @summary Specifies the background color for the entire tab bar.
      *
      * @platform android

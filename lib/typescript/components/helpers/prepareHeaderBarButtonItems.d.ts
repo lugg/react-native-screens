@@ -2,6 +2,7 @@ import { HeaderBarButtonItem } from 'react-native-screens/types';
 export declare const prepareHeaderBarButtonItems: (barButtonItems: HeaderBarButtonItem[], side: "left" | "right") => (import("react-native-screens/types").HeaderBarButtonItemSpacing | {
     buttonId: string;
     imageSource: import("react-native").ImageResolvedAssetSource | undefined;
+    templateSource: import("react-native").ImageResolvedAssetSource | undefined;
     sfSymbolName: string | undefined;
     titleStyle: {
         color: import("react-native").ProcessedColorValue | null | undefined;
@@ -37,6 +38,7 @@ export declare const prepareHeaderBarButtonItems: (barButtonItems: HeaderBarButt
 } | {
     buttonId: string;
     imageSource: import("react-native").ImageResolvedAssetSource | undefined;
+    templateSource: import("react-native").ImageResolvedAssetSource | undefined;
     sfSymbolName: string | undefined;
     titleStyle: {
         color: import("react-native").ProcessedColorValue | null | undefined;
@@ -78,6 +80,7 @@ export declare const prepareHeaderBarButtonItems: (barButtonItems: HeaderBarButt
         items: (import("react-native-screens/types").HeaderBarButtonItemMenuAction | import("react-native-screens/types").HeaderBarButtonItemSubmenu)[];
     };
     imageSource: import("react-native").ImageResolvedAssetSource | undefined;
+    templateSource: import("react-native").ImageResolvedAssetSource | undefined;
     sfSymbolName: string | undefined;
     titleStyle: {
         color: import("react-native").ProcessedColorValue | null | undefined;
@@ -116,6 +119,7 @@ export declare const prepareHeaderBarButtonItems: (barButtonItems: HeaderBarButt
         items: (import("react-native-screens/types").HeaderBarButtonItemMenuAction | import("react-native-screens/types").HeaderBarButtonItemSubmenu)[];
     };
     imageSource: import("react-native").ImageResolvedAssetSource | undefined;
+    templateSource: import("react-native").ImageResolvedAssetSource | undefined;
     sfSymbolName: string | undefined;
     titleStyle: {
         color: import("react-native").ProcessedColorValue | null | undefined;

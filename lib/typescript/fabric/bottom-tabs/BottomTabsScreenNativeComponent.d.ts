@@ -38,6 +38,7 @@ type BlurEffect = 'none' | 'systemDefault' | 'extraLight' | 'light' | 'dark' | '
 type Orientation = 'inherit' | 'all' | 'allButUpsideDown' | 'portrait' | 'portraitUp' | 'portraitDown' | 'landscape' | 'landscapeLeft' | 'landscapeRight';
 type SystemItem = 'none' | 'bookmarks' | 'contacts' | 'downloads' | 'favorites' | 'featured' | 'history' | 'more' | 'mostRecent' | 'mostViewed' | 'recents' | 'search' | 'topRated';
 type ScrollEdgeEffect = 'automatic' | 'hard' | 'soft' | 'hidden';
+type UserInterfaceStyle = 'unspecified' | 'light' | 'dark';
 export interface NativeProps extends ViewProps {
     onLifecycleStateChange?: DirectEventHandler<LifecycleStateChangeEvent>;
     onWillAppear?: DirectEventHandler<GenericEmptyEvent>;
@@ -47,6 +48,7 @@ export interface NativeProps extends ViewProps {
     isFocused?: boolean;
     tabKey: string;
     title?: string | undefined | null;
+    isTitleUndefined?: WithDefault<boolean, true>;
     badgeValue?: string;
     orientation?: WithDefault<Orientation, 'inherit'>;
     drawableIconResourceName?: string;
@@ -72,6 +74,7 @@ export interface NativeProps extends ViewProps {
     leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
     rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
     topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+    userInterfaceStyle?: WithDefault<UserInterfaceStyle, 'unspecified'>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

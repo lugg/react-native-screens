@@ -82,6 +82,7 @@ export interface NativeProps extends ViewProps {
     leftScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
     rightScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
     topScrollEdgeEffect?: WithDefault<ScrollEdgeEffect, 'automatic'>;
+    synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

@@ -77,6 +77,7 @@ export interface NativeProps extends ViewProps {
     navigationBarTranslucent?: boolean;
     navigationBarHidden?: boolean;
     nativeBackButtonDismissalEnabled?: boolean;
+    synchronousShadowStateUpdatesEnabled?: WithDefault<boolean, false>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;
