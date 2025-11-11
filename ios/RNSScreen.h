@@ -53,6 +53,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
+- (void)setupSheetDetentAnimationTracking;
 - (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
@@ -94,6 +95,7 @@ namespace react = facebook::react;
 @property (nonatomic) RNSScrollEdgeEffect leftScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect rightScrollEdgeEffect;
 @property (nonatomic) RNSScrollEdgeEffect topScrollEdgeEffect;
+@property (nonatomic, readwrite) BOOL synchronousShadowStateUpdatesEnabled;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -131,6 +133,12 @@ namespace react = facebook::react;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 @property (nonatomic, readonly, getter=isMarkedForUnmountInCurrentTransaction)
     BOOL markedForUnmountInCurrentTransaction;
+
+/**
+ * Whether the snapshot for the transition made for JS-popped views should be taken after view updates or not.
+ * *This property was introduced for the sake of integration with reanimated.*
+ */
+@property (nonatomic) BOOL snapshotAfterUpdates;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -176,10 +184,18 @@ namespace react = facebook::react;
 /**
  * Tell `Screen` component that it has been removed from react state and can safely cleanup
  * any retained resources.
+ */
+- (void)invalidateImpl;
+
+#ifndef RCT_NEW_ARCH_ENABLED
+/**
+ * Tell `Screen` component that it has been removed from react state and can safely cleanup
+ * any retained resources.
  *
- * Note, that on old architecture this method might be called by RN via `RCTInvalidating` protocol.
+ * On old architecture this method might be called by RN via `RCTInvalidating` protocol.
  */
 - (void)invalidate;
+#endif // !RCT_NEW_ARCH_ENABLED
 
 /**
  * Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.

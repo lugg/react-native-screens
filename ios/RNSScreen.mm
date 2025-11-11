@@ -12,6 +12,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <cxxreact/ReactNativeVersion.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -99,6 +100,7 @@ struct ContentWrapperBox {
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
+    _snapshotAfterUpdates = NO;
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _contentWrapperBox = {};
@@ -190,7 +192,15 @@ RNS_IGNORE_SUPER_CALL_END
         : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
 
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), {0, effectiveContentOffsetY}};
-    _state->updateState(std::move(newState));
+
+    _state->updateState(
+        std::move(newState)
+#if REACT_NATIVE_VERSION_MINOR >= 82
+            ,
+        _synchronousShadowStateUpdatesEnabled ? facebook::react::EventQueue::UpdateMode::unstable_Immediate
+                                              : facebook::react::EventQueue::UpdateMode::Asynchronous
+#endif
+    );
 
     // TODO: Requesting layout on every layout is wrong. We should look for a way to get rid of this.
     UINavigationController *navctr = _controller.navigationController;
@@ -908,11 +918,18 @@ RNS_IGNORE_SUPER_CALL_END
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-- (void)invalidate
+- (void)invalidateImpl
 {
   _controller = nil;
   [_sheetsScrollView unpin];
 }
+
+#ifndef RCT_NEW_ARCH_ENABLED
+- (void)invalidate
+{
+  [self invalidateImpl];
+}
+#endif
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 
@@ -941,6 +958,11 @@ RNS_IGNORE_SUPER_CALL_END
                           animate:(BOOL)animate
 {
   if (sheet.selectedDetentIdentifier != detent) {
+#ifdef RCT_NEW_ARCH_ENABLED
+    // On Fabric, layout does not trigger real-time Y position.
+    // Start tracking detent change animation instead.
+    [_controller setupSheetDetentAnimationTracking];
+#endif
     [self setPropertyForSheet:sheet
                     withBlock:^{
                       sheet.selectedDetentIdentifier = detent;
@@ -1352,6 +1374,8 @@ RNS_IGNORE_SUPER_CALL_END
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
+  [self setSynchronousShadowStateUpdatesEnabled:newScreenProps.synchronousShadowStateUpdatesEnabled];
+
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -1548,6 +1572,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _trackingYFromLayout;
   BOOL _dragging;
   BOOL _isTransitioning;
+  BOOL _isAnimatingDetentChange;
   BOOL _closing;
   BOOL _goingForward;
   int _dismissCount;
@@ -1588,7 +1613,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _trackingYFromLayout = YES;
 
     CGFloat sheetY = self.presentedView.frame.origin.y;
-    [self notifySheetTranslation:sheetY transitioning:NO];
+
+    // If we're animating a detent change, mark as transitioning
+    // to manually animate position in JS.
+    BOOL transitioning = _isAnimatingDetentChange;
+
+    [self notifySheetTranslation:sheetY transitioning:transitioning];
   }
 }
 
@@ -1938,6 +1968,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)setupSheetDetentAnimationTracking
+{
+  if (self.modalPresentationStyle != UIModalPresentationFormSheet) {
+    return;
+  }
+
+  // Mark that we're animating a detent change
+  _isAnimatingDetentChange = YES;
+
+  // Schedule flag reset after animation completes (default sheet animation is ~0.35s)
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    self->_isAnimatingDetentChange = NO;
+  });
+}
+#endif
+
 #pragma mark - transition progress related methods
 
 - (void)setupProgressNotification
@@ -2253,7 +2300,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIView *superView = self.view.superview;
   // if we dismissed the view natively, it will already be detached from view hierarchy
   if (self.view.window != nil) {
-    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    auto afterUpdates = self.screenView.snapshotAfterUpdates;
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:afterUpdates];
     snapshot.frame = self.view.frame;
     [self.view removeFromSuperview];
     self.view = snapshot;
