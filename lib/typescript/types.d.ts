@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, NativeSyntheticEvent, ViewProps, View, TargetedEvent, TextInputFocusEventData, ColorValue, ImageSourcePropType } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
-import type { ScrollEdgeEffect, UserInterfaceStyle } from './types';
+import type { ScrollEdgeEffect, UserInterfaceStyle } from './components/shared/types';
 export type SearchBarCommands = {
     focus: () => void;
     blur: () => void;
